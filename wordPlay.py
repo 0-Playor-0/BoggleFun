@@ -10,7 +10,7 @@ for word in readFile:
 
 #Words are stored in a list, as a list
 
-def checkEng(word):
+def checkifEngWord(word):
     print(word)
     if word not in words:
         print("Not an english word or not in dataset")
