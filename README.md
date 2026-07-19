@@ -1,20 +1,74 @@
-To run the game, first run the main.py file
+# BoggleFun
 
-The Game:
-The game is a jumbled nxn grid of letters on which words are formed by connecting adjacent letters. 
-Some players like to tap the words out, but the fastest way to play is to swipe your way to victory.
-Form as many words as possible within the two minute time frame. Words may be formed vertically, horizontally and diagonally.
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
+A command-line Boggle game: search a randomly generated letter grid for words by chaining together adjacent tiles, before the clock runs out.
 
-The code has been clearly segmentized for easy understanding and the comments hopefully make it easier to understand the code.
+## How it plays
 
+- You choose the grid size (n×n).
+- Words are formed by connecting adjacent letters — horizontally, vertically, or diagonally — without reusing a tile within the same word.
+- You have **2 minutes** to find as many valid words as possible.
+- Each word is checked against a ~4,000-word dictionary before it counts.
+- Score is the total number of letters across all valid words found.
 
+## Install
 
-After running main, you have the option to choose how big you would like the grid to be. This defines the size of the grid where the grid is n*n and you enter n.
-Now, it will ask you if you want to continue. If yes, type anything except "No" or "no". If no, typing no will exit the game. If yes, you will be asked to type the coordinates
-of the first letter in the format of "x,y". Then, you will be asked to type the coordinates of the next letter, again in the format "x,y". When done type "done" or "Done" or 
-"no" or "No" to check if your word is valid. If not, type another word. If it is, its points get added, and you get to choose if you would like to enter another word. Once done,
-type "no" or "No" when they ask "Would you like to continue?". It will tell you your score.
+Requires Python 3.9+. No external dependencies for the game itself.
 
-Coming Soon :
-Timer feature
+```bash
+git clone https://github.com/0-Playor-0/BoggleFun.git
+cd BoggleFun
+```
+
+## Run
+
+```bash
+python3 main.py
+```
+
+You'll be asked for a grid size, then prompted to enter coordinates for each letter in a word, in `x,y` format (0-indexed), one at a time. Type `done` or `no` to submit the word, or `exit` at any prompt to quit.
+
+Example:
+
+```
+How big would you like the grid to be? 4
+ ___ ___ ___ ___
+| C | A | T | S |
+ ...
+Would you like to continue? yes
+First letter (x,y): 0,0
+Second letter (x,y): 0,1
+Next letter (x,y), or "done" to submit: 0,2
+Next letter (x,y), or "done" to submit: done
+Nice! "CAT" added (3 points).
+```
+
+## Run the tests
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
+## Tech stack
+
+- Python 3, standard library only (`csv`, `random`, `time`) for the game itself
+- `pytest` for tests
+
+## Why I built this
+
+A small project to practice grid/graph traversal, input validation, and CLI game design — a classic word game re-implemented from scratch on the command line.
+
+## Ideas for later (not implemented)
+
+- Difficulty presets (grid size + time limit bundled together, e.g. Easy/Medium/Hard)
+- A "show all possible words" solver to reveal what you missed after time runs out
+- Persistent high-score tracking across sessions
+
+## License
+
+[MIT](LICENSE)
