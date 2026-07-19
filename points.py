@@ -1,7 +1,4 @@
-
-
 def calculate_total(words):
-    points = 0
-    for word in words:
-        points += len(word)
-    print("Your score is" , points , "!")
+    total = sum(len(word) for word in words)
+    print(f"Your score is {total}!")
+    return total

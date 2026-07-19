@@ -1,22 +1,17 @@
 import csv
+from pathlib import Path
 
-#Working with the word list
-word_list = open('4000-words.csv')
-readFile = csv.reader(word_list)
+_WORDLIST_PATH = Path(__file__).parent / "4000-words.csv"
 
-words = []
-for word in readFile:
-    words.append(word[0])
 
-#Words are stored in a list, as a list
+def _load_words(path=_WORDLIST_PATH):
+    with open(path, newline="") as word_file:
+        return {row[0].upper() for row in csv.reader(word_file) if row}
 
-def checkifEngWord(word):
-    print(word)
-    if word not in words:
-        print("Not an english word or not in dataset")
-        return False
-    else:
-        print("Nice word, continue!")
-        return True
 
- 
+WORDS = _load_words()
+
+
+def is_english_word(word):
+    """Case-insensitive lookup against the word list."""
+    return word.upper() in WORDS

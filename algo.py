@@ -1,92 +1,56 @@
-import basicui as bui
-import wordPlay
-import errorChecker
 import sys
 import time
-  
-global timerOld
-global half
-global one
-global oneHalf
-global two
 
-timerOld = time.time()
-#The foundPaths is where all paths are stored to ensure repeats are not allowed, and similarly foundWords help to calculate the points!
+import errorChecker
 
-foundPaths = []
-foundWords = []
-half = False
-one = False
-oneHalf = False
-two = False
+TIME_LIMIT_SECONDS = 120
+MIN_WORD_LENGTH = 3
 
-#Take input as z lines of code in the form (x,y) where x and y are coordinates and z is the number of letters in the word.
 
-def algo():
-    inputs = []    
+def parse_coord(raw):
+    parts = raw.split(",")
+    if len(parts) != 2:
+        raise ValueError(f"'{raw}' is not in x,y format")
+    return (int(parts[0]), int(parts[1]))
 
-    firstInput = str(input("First Letter (x,y) :"))
-    if firstInput == "exit" or firstInput == "Exit":
-        sys.exit("You exitted the game")
-    inputs.append(firstInput)
-    
-    secondInput = input("Second Letter (x,y) :")
-    if secondInput == "exit" or firstInput == "Exit":
-        sys.exit("You exitted the game")
-    inputs.append(secondInput)
 
+def prompt_coord(label):
+    raw = input(f"{label} (x,y): ").strip()
+    if raw.lower() == "exit":
+        sys.exit("You exited the game.")
+    return raw
+
+
+def play_round(grid, n, found_words, found_paths, deadline):
+    """Play one word-guessing round. Returns False if time has run out."""
+    if time.time() >= deadline:
+        print("\nTime's up!\n")
+        return False
+
+    coords_raw = [prompt_coord("First letter"), prompt_coord("Second letter")]
     while True:
-        #Timer Doesnt work yet due to various errors.
-        """
-        if timerOld + 120 < time.time() and two == False:
-            print("\nYour time has passed, sorry!\n")
-            two = True
-            return None
-        elif timerOld + 90 < time.time() and oneHalf == False:
-            print("\n1.5 minutes have passed\n")
-            oneHalf = True
-        elif timerOld + 60 < time.time() and one == False:
-            print("\n1 minute has passed\n")
-            one = True
-        elif timerOld + 30 < time.time() and half == False:
-            print("\n30 seconds have passed\n")
-            half = False
-            return None
-        """
-        Input = str(input('Next Letter ("x,y") and "No" to Exit :'))
-        if Input == "Done" or Input == "done" or Input == "no" or Input == "No":
+        if time.time() >= deadline:
+            print("\nTime's up!\n")
+            return False
+        raw = input('Next letter (x,y), or "done" to submit: ').strip()
+        if raw.lower() in ("done", "no"):
             break
-        else:
-            inputs.append(Input)
+        coords_raw.append(raw)
 
-    workInputs = []
+    if len(coords_raw) < MIN_WORD_LENGTH:
+        print(f"Words need at least {MIN_WORD_LENGTH} letters. Try again.")
+        return True
+
     try:
-        for Input in inputs:
-            i = []
-            Input = Input.strip("")
-            i = Input.split(",")
-            for x in range (len(i)):
-                i[x] = int(i[x])
-            workInputs.append(i)
-    
-        errorChecker.checker(workInputs)
-        print(workInputs)
-    except:
-        print("Since something went wrong! Make sure all your entries are in the right format and there are atleast 3 letters in the word")
-    return None
+        coords = [parse_coord(raw) for raw in coords_raw]
+    except ValueError:
+        print("Coordinates must look like 'x,y' with whole numbers. Try again.")
+        return True
 
-#Things left to do : Check if the position given is possible on the board of n - _/
-#Ensure that it is not possible to enter same location two times. - _/
-#Make it so that unlimited tries on words - _/
-#Ensure that the words are compared to the csv file to ensure that there is no funny business ocurring. - _/
-#Ensure that points system is linked to the foundWords - _/
-#Add a working timer later on
-#Ensure the benefits of the same combination cannot be reaped more than once.
+    word = errorChecker.validate(coords, grid, n, found_paths)
+    if word:
+        found_words.append(word)
+        found_paths.append(coords)
+        print(f'Nice! "{word}" added ({len(word)} points).')
 
-
-
-
-    
-
-                
-
+    return True
